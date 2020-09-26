@@ -1,18 +1,30 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <div class="flex flex-center row">
+      <q-input filled v-model="search" label="Search" class="col-12 col-md-8">
+        <template v-slot:append>
+          <q-icon name="search" />
+        </template>
+      </q-input>
+    </div>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
 
 export default {
   name: "Home",
-  components: {
-    HelloWorld
+  data() {
+    return {
+      search: ""
+    };
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.home {
+  padding: 1rem;
+}
+</style>
