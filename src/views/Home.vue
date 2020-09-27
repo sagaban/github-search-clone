@@ -24,7 +24,9 @@ import tabs from "@/components/TabsMain";
 import {
   searchRepositoryDetailsFragment,
   searchIssueDetailsFragment,
-  searchUserDetailsFragment
+  searchUserDetailsFragment,
+  searchPullRequestDetailsFragment,
+  searchOrganizationDetailsFragment
 } from "@/graphql/fragments.js";
 
 export default {
@@ -73,18 +75,22 @@ export default {
             issueCount
             nodes {
               ...SearchIssueDetails
+              ...SearchPullRequestDetails
             }
           }
           users: search(query: $searchString, type: USER, first: 10) {
             userCount
             nodes {
               ...SearchUserDetails
+              ...SearchOrganizationDetails
             }
           }
         }
         ${searchRepositoryDetailsFragment}
         ${searchIssueDetailsFragment}
         ${searchUserDetailsFragment}
+        ${searchPullRequestDetailsFragment}
+        ${searchOrganizationDetailsFragment}
       `,
       manual: true,
       result(result) {

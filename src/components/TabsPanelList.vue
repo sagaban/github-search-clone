@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="list-wrapper">
     <q-list>
       <component
         v-for="item in tabData.nodes"
@@ -37,4 +37,12 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.list-wrapper {
+  &::v-deep {
+    .q-item__label {
+      line-height: 1.5rem !important;
+    }
+  }
+}
+</style>

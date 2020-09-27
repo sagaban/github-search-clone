@@ -1,24 +1,53 @@
 <template>
-  <q-item>
-    <q-item-section>
-      <q-item-label>USER</q-item-label>
-      <q-item-label caption lines="2"
-        >Secondary line text. Lorem ipsum dolor sit amet, consectetur adipiscit
-        elit.</q-item-label
-      >
-    </q-item-section>
+  <div>
+    <q-separator spaced />
 
-    <q-item-section side top>
-      <q-item-label caption>5 min ago</q-item-label>
-      <q-icon name="star" color="yellow" />
-    </q-item-section>
-  </q-item>
+    <q-item>
+      <q-item-section avatar>
+        <q-avatar>
+          <img :src="itemData.avatarUrl" />
+        </q-avatar>
+      </q-item-section>
+      <q-item-section>
+        <q-item-label>
+          <a :href="itemData.url">{{ itemData.name }}</a>
+          <a :href="itemData.url" class="username-link">{{ itemData.login }}</a>
+        </q-item-label>
+        <q-item-label>{{ itemData.bio || itemData.description }}</q-item-label>
+        <q-item-label caption class="info-row">
+          <span class="info-item" v-if="itemData.location">
+            {{ itemData.location }}
+          </span>
+
+          <span class="info-item" v-if="itemData.email">
+            {{ itemData.email }}
+          </span>
+        </q-item-label>
+      </q-item-section>
+    </q-item>
+  </div>
 </template>
 
 <script>
 export default {
-  name: "TabsPanelItemUser"
+  name: "TabsPanelItemUser",
+  props: {
+    itemData: {
+      type: Object,
+      required: true
+    }
+  }
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+@import "quasar/dist/quasar";
+
+.username-link {
+  color: $grey-7;
+  margin-left: 1rem;
+}
+.info-item {
+  padding-right: 1rem;
+}
+</style>

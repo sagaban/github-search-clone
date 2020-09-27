@@ -28,7 +28,9 @@ export const searchIssueDetailsFragment = gql`
     bodyText
     repository {
       name
+      url
     }
+    number
     createdAt
     updatedAt
     url
@@ -39,10 +41,18 @@ export const searchIssueDetailsFragment = gql`
   }
 `;
 
+export const searchPullRequestDetailsFragment = gql`
+  fragment SearchPullRequestDetails on PullRequest {
+    title
+    url
+  }
+`;
+
 export const searchUserDetailsFragment = gql`
   fragment SearchUserDetails on User {
     id
     name
+    url
     login
     bio
     location
@@ -55,5 +65,14 @@ export const searchUserDetailsFragment = gql`
         }
       }
     }
+  }
+`;
+
+export const searchOrganizationDetailsFragment = gql`
+  fragment SearchOrganizationDetails on Organization {
+    name
+    login
+    description
+    avatarUrl
   }
 `;
