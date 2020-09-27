@@ -1,121 +1,96 @@
 <template>
-  <!-- <div>
-    <q-card>
-      <q-tabs v-model="tab" class="bg-primary text-white shadow-2">
-        <q-tab name="mails" icon="mail" label="Mails">
-          <q-badge color="red" floating>2</q-badge>
-        </q-tab>
-        <q-tab name="alarms" icon="alarm" label="Alarms">
-          <q-badge color="red" floating>10+</q-badge>
-        </q-tab>
-        <q-tab alert name="movies" icon="movie" label="Movies" />
-      </q-tabs>
-      <q-tab-panels v-model="tab" animated>
-        <q-tab-panel name="mails">
-          <div class="text-h6">Mails</div>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        </q-tab-panel>
+  <div class="tabs-wrapper">
+    <q-splitter v-model="splitterModel">
+      <template v-slot:before>
+        <q-tabs v-model="tab" vertical class="text-teal">
+          <q-tab
+            v-for="tab in tabsInfo"
+            :key="tab.name"
+            :name="tab.name"
+            :label="tab.label"
+            :icon="tab.icon"
+          >
+            <q-badge color="accent" floating>{{
+              tabsData[tab.name][tab.countKey] | formatBigAmount
+            }}</q-badge>
+          </q-tab>
+        </q-tabs>
+      </template>
 
-        <q-tab-panel name="alarms">
-          <div class="text-h6">Alarms</div>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        </q-tab-panel>
-
-        <q-tab-panel name="movies">
-          <div class="text-h6">Movies</div>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        </q-tab-panel>
-      </q-tab-panels>
-    </q-card>
-  </div> -->
-  <q-splitter v-model="splitterModel" style="height: 250px">
-    <template v-slot:before>
-      <q-tabs v-model="tab" vertical class="text-teal">
-        <q-tab name="mails" icon="mail" label="Mails">
-          <q-badge color="accent" floating>2</q-badge>
-        </q-tab>
-        <q-tab name="alarms" icon="alarm" label="Alarms" />
-        <q-tab name="movies" icon="movie" label="Movies" />
-      </q-tabs>
-    </template>
-
-    <template v-slot:after>
-      <q-tab-panels
-        v-model="tab"
-        animated
-        swipeable
-        vertical
-        transition-prev="jump-up"
-        transition-next="jump-up"
-      >
-        <q-tab-panel name="mails">
-          <div class="text-h4 q-mb-md">Mails</div>
-          <p>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis
-            praesentium cumque magnam odio iure quidem, quod illum numquam
-            possimus obcaecati commodi minima assumenda consectetur culpa fuga
-            nulla ullam. In, libero.
-          </p>
-          <p>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis
-            praesentium cumque magnam odio iure quidem, quod illum numquam
-            possimus obcaecati commodi minima assumenda consectetur culpa fuga
-            nulla ullam. In, libero.
-          </p>
-        </q-tab-panel>
-
-        <q-tab-panel name="alarms">
-          <div class="text-h4 q-mb-md">Alarms</div>
-          <p>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis
-            praesentium cumque magnam odio iure quidem, quod illum numquam
-            possimus obcaecati commodi minima assumenda consectetur culpa fuga
-            nulla ullam. In, libero.
-          </p>
-          <p>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis
-            praesentium cumque magnam odio iure quidem, quod illum numquam
-            possimus obcaecati commodi minima assumenda consectetur culpa fuga
-            nulla ullam. In, libero.
-          </p>
-        </q-tab-panel>
-
-        <q-tab-panel name="movies">
-          <div class="text-h4 q-mb-md">Movies</div>
-          <p>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis
-            praesentium cumque magnam odio iure quidem, quod illum numquam
-            possimus obcaecati commodi minima assumenda consectetur culpa fuga
-            nulla ullam. In, libero.
-          </p>
-          <p>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis
-            praesentium cumque magnam odio iure quidem, quod illum numquam
-            possimus obcaecati commodi minima assumenda consectetur culpa fuga
-            nulla ullam. In, libero.
-          </p>
-          <p>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis
-            praesentium cumque magnam odio iure quidem, quod illum numquam
-            possimus obcaecati commodi minima assumenda consectetur culpa fuga
-            nulla ullam. In, libero.
-          </p>
-        </q-tab-panel>
-      </q-tab-panels>
-    </template>
-  </q-splitter>
+      <template v-slot:after>
+        <q-tab-panels
+          v-model="tab"
+          animated
+          swipeable
+          vertical
+          transition-prev="jump-up"
+          transition-next="jump-up"
+        >
+          <q-tab-panel v-for="tab in tabsInfo" :key="tab.name" :name="tab.name">
+            <div class="text-h5 q-mb-md">
+              {{ tab.label }} ( {{ tabsData[tab.name][tab.countKey] }} results)
+            </div>
+            <tabs-panel-list :tab-info="tab" :tab-data="tabsData[tab.name]" />
+          </q-tab-panel>
+        </q-tab-panels>
+      </template>
+    </q-splitter>
+  </div>
 </template>
 
 <script>
+import TabsPanelList from "@/components/TabsPanelList";
 export default {
   name: "TabsMain",
+  components: {
+    TabsPanelList
+  },
+  props: {
+    tabsData: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return {
-      tab: "mails",
-      splitterModel: 20
+      tab: "repos",
+      splitterModel: 20,
+      tabsInfo: [
+        {
+          name: "repos",
+          label: "Repos",
+          icon: "code",
+          countKey: "repositoryCount",
+          component: "TabsPanelItemRepo"
+        },
+        {
+          name: "issues",
+          label: "Issues",
+          icon: "bug_report",
+          countKey: "issueCount",
+          component: "TabsPanelItemIssue"
+        },
+        {
+          name: "users",
+          label: "Users",
+          icon: "person",
+          countKey: "userCount",
+          component: "TabsPanelItemUser"
+        }
+      ]
     };
   }
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.tabs-wrapper {
+  padding-top: 1rem;
+
+  &::v-deep {
+    .q-tab__content {
+      min-width: 70px;
+    }
+  }
+}
+</style>

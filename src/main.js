@@ -4,7 +4,7 @@ import router from "./router";
 import store from "./store";
 import "./quasar";
 import apolloProvider from "./apollo";
-
+import "./customFilters";
 Vue.config.productionTip = false;
 
 new Vue({

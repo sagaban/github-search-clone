@@ -44,4 +44,11 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss">
+@import "quasar/dist/quasar";
+
+a {
+  text-decoration: none !important;
+  color: $primary;
+}
+</style>

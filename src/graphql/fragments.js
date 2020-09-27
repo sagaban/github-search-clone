@@ -2,7 +2,10 @@ import gql from "graphql-tag";
 
 export const searchRepositoryDetailsFragment = gql`
   fragment SearchRepositoryDetails on Repository {
+    id
     name
+    url
+    nameWithOwner
     description
     stargazerCount
     primaryLanguage {
@@ -18,6 +21,7 @@ export const searchRepositoryDetailsFragment = gql`
 
 export const searchIssueDetailsFragment = gql`
   fragment SearchIssueDetails on Issue {
+    id
     author {
       login
     }
@@ -37,6 +41,7 @@ export const searchIssueDetailsFragment = gql`
 
 export const searchUserDetailsFragment = gql`
   fragment SearchUserDetails on User {
+    id
     name
     login
     bio

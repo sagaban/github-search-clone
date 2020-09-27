@@ -13,10 +13,8 @@
         </template>
       </q-input>
     </div>
-    Search result: {{ searchResult }}
-    <div v-if="$apollo.loading">Loading...</div>
-    <div v-else-if="$apollo.error">Error: {{ $apollo.error }}</div>
-    <tabs v-else :search-result="searchResult" />
+    <tabs v-if="searchResult" :tabs-data="searchResult" />
+    <div class="search-message" v-else>Enter a value to search in GitHub</div>
   </div>
 </template>
 
@@ -109,5 +107,10 @@ export default {
 <style lang="scss" scoped>
 .home {
   padding: 1rem;
+}
+.search-message {
+  padding: 1rem;
+  text-align: center;
+  font-size: 1.5rem;
 }
 </style>
