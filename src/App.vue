@@ -2,14 +2,14 @@
   <q-layout view="hHh lpR fFf">
     <q-header reveal>
       <q-toolbar>
-        <q-btn
+        <!-- <q-btn
           flat
           dense
           round
           @click="drawerOpen = !drawerOpen"
           aria-label="Menu"
           icon="menu"
-        />
+        /> -->
 
         <q-toolbar-title>
           GitHub search

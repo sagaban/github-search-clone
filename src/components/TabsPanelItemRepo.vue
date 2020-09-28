@@ -57,6 +57,7 @@ export default {
     min-width: 1rem;
     justify-content: flex-start;
     padding-right: 0.5rem;
+    padding-top: 5px;
   }
 }
 .info-item {

@@ -9,6 +9,7 @@
       >
       </component>
     </q-list>
+    <tabs-panel-pagination :tab-info="tabInfo" :tab-data="tabData" />
   </div>
 </template>
 
@@ -16,13 +17,15 @@
 import TabsPanelItemRepo from "@/components/TabsPanelItemRepo";
 import TabsPanelItemIssue from "@/components/TabsPanelItemIssue";
 import TabsPanelItemUser from "@/components/TabsPanelItemUser";
+import TabsPanelPagination from "@/components/TabsPanelPagination";
 
 export default {
   name: "TabPanelList",
   components: {
     TabsPanelItemRepo,
     TabsPanelItemIssue,
-    TabsPanelItemUser
+    TabsPanelItemUser,
+    TabsPanelPagination
   },
   props: {
     tabInfo: {

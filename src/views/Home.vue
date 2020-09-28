@@ -6,21 +6,24 @@
         v-model="searchString"
         label="Search"
         class="col-12 col-md-8"
-        @keyup.enter="triggerSearch"
+        @input="cleanPagination"
       >
         <template v-slot:append>
-          <q-icon name="search" @click="triggerSearch" />
+          <q-icon name="search" />
         </template>
       </q-input>
     </div>
-    <tabs v-if="searchResult" :tabs-data="searchResult" />
+    <tabs v-if="searchResults" :tabs-data="searchResults" />
     <div class="search-message" v-else>Enter a value to search in GitHub</div>
+    <div class="loading" v-if="$apollo.loading">Loading...</div>
   </div>
 </template>
 
 <script>
 import gql from "graphql-tag";
-import tabs from "@/components/TabsMain";
+import { mapState, mapGetters } from "vuex";
+
+import Tabs from "@/components/TabsMain";
 import {
   searchRepositoryDetailsFragment,
   searchIssueDetailsFragment,
@@ -29,36 +32,69 @@ import {
   searchOrganizationDetailsFragment
 } from "@/graphql/fragments.js";
 
+import { queryTypes } from "@/helpers/constants";
+
 export default {
   name: "Home",
   components: {
-    tabs
+    Tabs
   },
   data() {
     return {
       searchString: "",
-      searchResult: null
+      reposResult: null,
+      issuesResult: null,
+      usersResult: null,
+      loading: false
     };
   },
+  computed: {
+    ...mapState({
+      resultsPerPage: state => state.pagination.resultsPerPage
+    }),
+    ...mapGetters([
+      "reposCurrentCursor",
+      "issuesCurrentCursor",
+      "usersCurrentCursor"
+    ]),
+    searchResults() {
+      if (this.reposResult && this.issuesResult && this.usersResult)
+        return {
+          repos: this.reposResult.search,
+          issues: this.issuesResult.search,
+          users: this.usersResult.search
+        };
+      return null;
+    }
+  },
   methods: {
-    triggerSearch() {
-      this.$q.loading.show();
-      this.$apollo.queries.githubSearch.skip = false;
-      this.$apollo.queries.githubSearch.refetch();
+    cleanPagination() {
+      this.$store.dispatch("cleanPagination");
     },
-    handleQueryResult(result) {
-      if (!result.loading) {
-        this.searchResult = result.data;
-        this.$q.loading.hide();
+    handleQueryResult(type, result) {
+      if (!result.loading && !result.error) {
+        this[type + "Result"] = result.data;
       }
-      this.$apollo.queries.githubSearch.skip = true;
+    },
+    updateCursor({ type, cursor }) {
+      this[type + "Cursor"] = cursor;
+      this.triggerSearch();
     }
   },
   apollo: {
-    githubSearch: {
+    reposSearch: {
       query: gql`
-        query Search($searchString: String!) {
-          repos: search(query: $searchString, type: REPOSITORY, first: 10) {
+        query SearchRepos(
+          $searchString: String!
+          $resultsPerPage: Int!
+          $cursor: String
+        ) {
+          search(
+            query: $searchString
+            type: REPOSITORY
+            first: $resultsPerPage
+            after: $cursor
+          ) {
             repositoryCount
             pageInfo {
               startCursor
@@ -70,15 +106,89 @@ export default {
               ...SearchRepositoryDetails
             }
           }
-          issues: search(query: $searchString, type: ISSUE, first: 10) {
-            __typename
+        }
+        ${searchRepositoryDetailsFragment}
+      `,
+      manual: true,
+      result(result) {
+        this.handleQueryResult(queryTypes.REPOS, result);
+      },
+
+      variables() {
+        return {
+          searchString: this.searchString,
+          resultsPerPage: this.resultsPerPage,
+          cursor: this.reposCurrentCursor
+        };
+      },
+      skip() {
+        return this.searchString === "";
+      }
+    },
+    issuesSearch: {
+      query: gql`
+        query SearchIssues(
+          $searchString: String!
+          $resultsPerPage: Int!
+          $cursor: String
+        ) {
+          search(
+            query: $searchString
+            type: ISSUE
+            first: $resultsPerPage
+            after: $cursor
+          ) {
+            pageInfo {
+              endCursor
+              hasNextPage
+              hasPreviousPage
+              startCursor
+            }
             issueCount
             nodes {
               ...SearchIssueDetails
               ...SearchPullRequestDetails
             }
           }
-          users: search(query: $searchString, type: USER, first: 10) {
+        }
+        ${searchIssueDetailsFragment}
+        ${searchPullRequestDetailsFragment}
+      `,
+      manual: true,
+      result(result) {
+        this.handleQueryResult(queryTypes.ISSUES, result);
+      },
+
+      variables() {
+        return {
+          searchString: this.searchString,
+          resultsPerPage: this.resultsPerPage,
+          cursor: this.issuesCurrentCursor
+        };
+      },
+      skip() {
+        return this.searchString === "";
+      }
+    },
+    usersSearch: {
+      query: gql`
+        query SearchUsers(
+          $searchString: String!
+          $resultsPerPage: Int!
+          $cursor: String
+        ) {
+          search(
+            query: $searchString
+            type: USER
+            first: $resultsPerPage
+            after: $cursor
+          ) {
+            pageInfo {
+              endCursor
+              hasNextPage
+              hasPreviousPage
+              startCursor
+            }
             userCount
             nodes {
               ...SearchUserDetails
@@ -86,24 +196,23 @@ export default {
             }
           }
         }
-        ${searchRepositoryDetailsFragment}
-        ${searchIssueDetailsFragment}
         ${searchUserDetailsFragment}
-        ${searchPullRequestDetailsFragment}
         ${searchOrganizationDetailsFragment}
       `,
       manual: true,
       result(result) {
-        this.handleQueryResult(result);
+        this.handleQueryResult(queryTypes.USERS, result);
       },
 
       variables() {
         return {
-          searchString: this.searchString
+          searchString: this.searchString,
+          resultsPerPage: this.resultsPerPage,
+          cursor: this.usersCurrentCursor
         };
       },
       skip() {
-        return true;
+        return this.searchString === "";
       }
     }
   }
@@ -113,10 +222,16 @@ export default {
 <style lang="scss" scoped>
 .home {
   padding: 1rem;
-}
-.search-message {
-  padding: 1rem;
-  text-align: center;
-  font-size: 1.5rem;
+
+  .search-message {
+    padding: 1rem;
+    text-align: center;
+    font-size: 1.5rem;
+  }
+
+  .loading {
+    font-size: 1.2rem;
+    padding: 1rem;
+  }
 }
 </style>

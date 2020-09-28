@@ -1,7 +1,6 @@
 <template>
   <div>
     <q-separator spaced />
-
     <q-item>
       <q-item-section avatar>
         <q-avatar>
@@ -21,6 +20,9 @@
 
           <span class="info-item" v-if="itemData.email">
             {{ itemData.email }}
+          </span>
+          <span class="info-item" v-if="itemData.followers">
+            {{ itemData.followers.totalCount }} followers
           </span>
         </q-item-label>
       </q-item-section>

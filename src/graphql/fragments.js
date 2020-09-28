@@ -58,6 +58,9 @@ export const searchUserDetailsFragment = gql`
     location
     email
     avatarUrl
+    followers {
+      totalCount
+    }
     organizations(first: 10) {
       nodes {
         ... on Organization {
