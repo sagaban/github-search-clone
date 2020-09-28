@@ -40,6 +40,8 @@
 
 <script>
 import TabsPanelList from "@/components/TabsPanelList";
+import { queryTypes } from "@/helpers/constants";
+
 export default {
   name: "TabsMain",
   components: {
@@ -53,25 +55,25 @@ export default {
   },
   data() {
     return {
-      tab: "repos",
+      tab: queryTypes.REPOS,
       splitterModel: 20,
       tabsInfo: [
         {
-          name: "repos",
+          name: queryTypes.REPOS,
           label: "Repos",
           icon: "code",
           countKey: "repositoryCount",
           component: "TabsPanelItemRepo"
         },
         {
-          name: "issues",
+          name: queryTypes.ISSUES,
           label: "Issues",
           icon: "bug_report",
           countKey: "issueCount",
           component: "TabsPanelItemIssue"
         },
         {
-          name: "users",
+          name: queryTypes.USERS,
           label: "Users",
           icon: "person",
           countKey: "userCount",

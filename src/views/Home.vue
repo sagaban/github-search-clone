@@ -60,9 +60,9 @@ export default {
     searchResults() {
       if (this.reposResult && this.issuesResult && this.usersResult)
         return {
-          repos: this.reposResult.search,
-          issues: this.issuesResult.search,
-          users: this.usersResult.search
+          [queryTypes.REPOS]: this.reposResult.search,
+          [queryTypes.ISSUES]: this.issuesResult.search,
+          [queryTypes.USERS]: this.usersResult.search
         };
       return null;
     }

@@ -2,26 +2,32 @@ import Vue from "vue";
 import Vuex from "vuex";
 
 Vue.use(Vuex);
+import { queryTypes } from "@/helpers/constants";
 
 const currentCursorByType = (type, state) => {
-  if (state.pagination[type + "CurrentPage"] === 1) {
+  if (state.pagination[type].currentPage === 1) {
     return null;
   } else {
-    return state.pagination[type + "Cursors"][
-      state.pagination[type + "CurrentPage"] - 2
-    ];
+    const cursorIndex = state.pagination[type].currentPage - 2;
+    return state.pagination[type].cursors[cursorIndex];
   }
 };
 
 const originalState = {
   pagination: {
     resultsPerPage: 10,
-    reposCursors: [],
-    issuesCursors: [],
-    usersCursors: [],
-    reposCurrentPage: 1,
-    issuesCurrentPage: 1,
-    usersCurrentPage: 1
+    [queryTypes.REPOS]: {
+      cursors: [],
+      currentPage: 1
+    },
+    [queryTypes.ISSUES]: {
+      cursors: [],
+      currentPage: 1
+    },
+    [queryTypes.USERS]: {
+      cursors: [],
+      currentPage: 1
+    }
   }
 };
 
@@ -32,12 +38,12 @@ export default new Vuex.Store({
       state.pagination = { ...originalState.pagination };
     },
     UPDATE_CURSORS(state, { type, cursor, page }) {
-      const oldCursor = state.pagination[type + "Cursors"];
+      const oldCursor = state.pagination[type].cursors;
 
       if (oldCursor.length === page - 2) {
         Vue.set(oldCursor, page - 2, cursor);
       }
-      state.pagination[type + "CurrentPage"] = page;
+      state.pagination[type].currentPage = page;
     }
   },
   actions: {
@@ -49,8 +55,8 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    reposCurrentCursor: state => currentCursorByType("repos", state),
-    issuesCurrentCursor: state => currentCursorByType("issues", state),
-    usersCurrentCursor: state => currentCursorByType("users", state)
+    reposCurrentCursor: state => currentCursorByType(queryTypes.REPOS, state),
+    issuesCurrentCursor: state => currentCursorByType(queryTypes.ISSUES, state),
+    usersCurrentCursor: state => currentCursorByType(queryTypes.USERS, state)
   }
 });

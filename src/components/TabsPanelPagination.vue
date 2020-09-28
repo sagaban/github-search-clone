@@ -14,12 +14,6 @@
 </template>
 
 <script>
-import { queryTypes } from "@/helpers/constants";
-const countMapper = {
-  [queryTypes.REPOS]: "repositoryCount",
-  [queryTypes.ISSUES]: "issueCount",
-  [queryTypes.USERS]: "userCount"
-};
 export default {
   name: "TabPanelPagination",
   props: {
@@ -34,10 +28,9 @@ export default {
   },
   computed: {
     max() {
-      const itemsCountKey = countMapper[this.tabInfo.name];
+      const countKey = this.tabInfo.countKey;
       const totalPages = Math.ceil(
-        this.tabData[itemsCountKey] /
-          this.$store.state.pagination.resultsPerPage
+        this.tabData[countKey] / this.$store.state.pagination.resultsPerPage
       );
       const next = this.tabData.pageInfo.hasNextPage ? 1 : 0;
       const availablePages = this.current + next;
@@ -47,7 +40,7 @@ export default {
       return Math.min(this.max, 5);
     },
     current() {
-      return this.$store.state.pagination[this.tabInfo.name + "CurrentPage"];
+      return this.$store.state.pagination[this.tabInfo.name].currentPage;
     }
   },
   methods: {
