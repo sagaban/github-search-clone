@@ -1,6 +1,6 @@
 # GitHub Search Clone
 
-Project up and running at https://sagaban.github.io/github-search-clone/
+Project up and running at https://powerful-refuge-50503.herokuapp.com/
 
 ## Project setup
 ```
