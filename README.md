@@ -1,5 +1,7 @@
 # GitHub Search Clone
 
+Project up and running at https://sagaban.github.io/github-search-clone/
+
 ## Project setup
 ```
 npm install
