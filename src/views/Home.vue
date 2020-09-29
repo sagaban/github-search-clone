@@ -70,6 +70,7 @@ export default {
   methods: {
     cleanPagination() {
       this.$store.dispatch("cleanPagination");
+      this.$router.push({ query: { q: this.searchString } });
     },
     handleQueryResult(type, result) {
       if (!result.loading && !result.error) {
@@ -214,6 +215,12 @@ export default {
       skip() {
         return this.searchString === "";
       }
+    }
+  },
+  created() {
+    const searchQueryParam = this.$route.query.q;
+    if (searchQueryParam) {
+      this.searchString = searchQueryParam;
     }
   }
 };
