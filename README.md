@@ -1,4 +1,4 @@
-# github-search
+# GitHub Search Clone
 
 ## Project setup
 ```
