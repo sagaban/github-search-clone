@@ -18,7 +18,7 @@ const fragmentMatcher = new IntrospectionFragmentMatcher({
 const httpLink = new HttpLink({
   uri: GRAPHQL_URI,
   headers: {
-    Authorization: `bearer ${AUTH_TOKEN}`
+    Authorization: `bearer ${AUTH_TOKEN || process.env.AUTH_TOKEN}`
   }
 });
 
